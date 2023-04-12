@@ -18,8 +18,17 @@ public class MainActivity extends AppCompatActivity {
 
     MediaPlayer player;
     private void camera() {
-        Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivity(camera);
+        Intent customCamera = new Intent(MainActivity.this, cameraActivity.class);
+        startActivity(customCamera);
+    }
+    private void story() {
+        if(player == null){
+            player = MediaPlayer.create(this, R.raw.story);
+        }
+        player.start();
+
+        Intent tocallvoice = new Intent(MainActivity.this, storyActivity.class);
+        startActivity(tocallvoice);
     }
 
     private void call() throws InterruptedException {
@@ -35,19 +44,33 @@ public class MainActivity extends AppCompatActivity {
 //useless kb
     public  String processor(String val){
 // translate translates the amharic to its english equivalent
-        String eval=translate(val);
+//        String eval=translate(val);
 
 
-        String[][] kb ={{"photo","p"},
-                         {"call","c"}
+        String[][] kb ={{"ፎቶ አንሺ","p"},
+                        {"ፎቶ","p"},
+                        {"ፎቶ አንሽ","p"},
+                        {"photo","p"},
+                        {"ስልክ","c"},
+                        {"ስልክ ደውል","c"},
+                        {"ስልክ ደዋይ","c"},
+                        {"ደውል","c"},
+                        {"ደወይ","c"},
+                        {"ተረት","s"},
+                        {"ተረት ተረት","s"},
+                        {"ተረክ","s"},
+                        {"ተረት አውሪ","s"},
+                        {"አውሪልኝ","s"}
         };
+
+
 
         for (int i = 0; i < kb.length; i++) {
             for (int j = 0; j < kb[i].length; j++) {
-                if (kb[i][j].equals(eval)) {
+                if (kb[i][j].equals(val)) {
                     System.out.println(kb[i][j+1]);
                     int lastIndex = (kb[i].length - 1);
-                    return kb[i][lastIndex]; // answer; return aa;
+                    return kb[i][lastIndex];
 
                 }
             }
@@ -65,6 +88,10 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "call translated", Toast.LENGTH_LONG).show();
             translate= "call";
         }
+        else if (val.equals("ተረት") || val.equals("ተረት ትረት") || val.equals("ተረክ")||val.equals("ትረት አውሪ")||val.equals("አውሪልኝ")) {
+            Toast.makeText(getApplicationContext(), "call translated", Toast.LENGTH_LONG).show();
+            translate= "story";
+        }
         return translate;
     }
 
@@ -76,9 +103,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setTitle("Personal Assistant Robot App");
 
-        TextView tv = findViewById(R.id.textView);
+//        TextView tv = findViewById(R.id.textView);
 
-        tv.setBackgroundColor(Color.parseColor("#26d0aa"));
+//        tv.setBackgroundColor(Color.parseColor("#26d0aa"));
 
         btn = findViewById(R.id.btnn);
         btn.setOnClickListener(new View.OnClickListener() {
@@ -102,6 +129,10 @@ public class MainActivity extends AppCompatActivity {
           String result =  processor(val);
           if (result.equals("nf")){
               Toast.makeText(getApplicationContext(), "ይሄንን ማድርግ አልችልም፣ ሌላ ይሞክሩ", Toast.LENGTH_LONG).show();
+              if(player == null){
+                  player = MediaPlayer.create(this, R.raw.tryagain);
+              }
+              player.start();
               Intent tovoice = new Intent(MainActivity.this, secondForVoice.class);
               startActivityForResult(tovoice,1);
           } else {
@@ -110,15 +141,19 @@ public class MainActivity extends AppCompatActivity {
 
               if (result.equals("p")){
                   camera();
-                 // there was an intent for opening secondForVoice, it works like a recurssion but not a right way to implement recurssion
               } else if (result.equals("c")) {
                   try {
                       call();
                   } catch (InterruptedException e) {
                       throw new RuntimeException(e);
                   }
+              } else if (result.equals("s")) {
+                  story();
+
               }
           }
     }
  }
+
+
 }

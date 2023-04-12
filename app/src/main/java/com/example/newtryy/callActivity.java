@@ -74,15 +74,15 @@ public class callActivity extends AppCompatActivity {
 
     }
 
-    private void voiceAutomation2() {
-        Intent voice = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);//to recognize my message
-        voice.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        voice.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "am-ET");
-        voice.putExtra(RecognizerIntent.EXTRA_PROMPT, "ማን ጋር ልደውል");
-        //pass this request to the os
-        startActivityForResult(voice, 1);
-    }
+//    private void voiceAutomation2() {
+//        Intent voice = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);//to recognize my message
+//        voice.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+//                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+//        voice.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "am-ET");
+//        voice.putExtra(RecognizerIntent.EXTRA_PROMPT, "ማን ጋር ልደውል");
+//        //pass this request to the os
+//        startActivityForResult(voice, 1);
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
