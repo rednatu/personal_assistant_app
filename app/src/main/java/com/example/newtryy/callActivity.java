@@ -1,5 +1,6 @@
 package com.example.newtryy;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -15,30 +16,25 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.speech.RecognizerIntent;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
 public class callActivity extends AppCompatActivity {
-
     String name;
+    Button callbut;
+    private static final int REQUEST_CALL = 1;
 
     public  String name_search(String val){
         String number = null;
         String name = null;
 
-// try to replace this list with the contacts
-// up to this step we won't change a thing
         ArrayList<ArrayList<String>> contacts ;
         contacts = getPhoneContact();
 
-//        String[][] phonebook = {{"ሰላም","tel:0911134679"},
-//                                {"ከበደ","tel:0946917326"},
-//                                {"አበበ","tel:0911234577"},
-//                                {"አሰፋ","tel:0911269477"},
-//                                {"አበባ","tel:0911233077"}
-//        };
         for (int i = 0; i < contacts.size(); i++) {
             for (int j = 0; j <contacts.get(i).size(); j++) {
                 if (contacts.get(i).get(j).equals(val)) {
@@ -46,20 +42,15 @@ public class callActivity extends AppCompatActivity {
                     number= contacts.get(i+1).get(j);
                     System.out.println(name);
                     System.out.println(number);
-                    
-
                 }
             }
         }
-
         if (name==null){
             return "nf";
         }
         else {
             return number;
         }
-
-
     }
 
 
@@ -69,28 +60,34 @@ public class callActivity extends AppCompatActivity {
         setContentView(R.layout.activity_call);
         setTitle("name of call Page");
 
-        Intent tovoice = new Intent(callActivity.this, secondForVoice.class);
-        startActivityForResult(tovoice,1);
+        callbut = findViewById(R.id.button6);
+        callbut.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                if (ContextCompat.checkSelfPermission(callActivity.this,
+                        Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(callActivity.this,
+                            new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL);
+                } else {
+
+                    startActivity(new Intent(Intent.ACTION_CALL, Uri.parse("tel:0967135915")));
+                }
+
+
+            }
+        });
+
+//        Intent tovoice = new Intent(callActivity.this, secondForVoice.class);
+//        startActivityForResult(tovoice,1);
 
     }
-
-//    private void voiceAutomation2() {
-//        Intent voice = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);//to recognize my message
-//        voice.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-//                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-//        voice.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "am-ET");
-//        voice.putExtra(RecognizerIntent.EXTRA_PROMPT, "ማን ጋር ልደውል");
-//        //pass this request to the os
-//        startActivityForResult(voice, 1);
-//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
-//            ArrayList<String> dataa=data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-//            name = dataa.get(0).toString();
+
             name = data.getStringExtra("value");
             String result =  name_search(name);
 
@@ -106,13 +103,38 @@ public class callActivity extends AppCompatActivity {
                 String first = "tel:";
 
 
-                Intent callIntent = new Intent(Intent.ACTION_DIAL);//CALL_PHONE argiw
-                callIntent.setData(Uri.parse(first.concat(result)));
-                startActivity(callIntent);
+//                Intent callIntent = new Intent(Intent.ACTION_DIAL);//CALL_PHONE argiw
+//                callIntent.setData(Uri.parse(first.concat(result)));
+//                startActivity(callIntent);
+
+                if (ContextCompat.checkSelfPermission(callActivity.this,
+                        Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(callActivity.this,
+                            new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL);
+                } else {
+
+                    startActivity(new Intent(Intent.ACTION_CALL, Uri.parse(first.concat(result))));
+                }
+
+
+
             }
             }
 
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_CALL) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+            } else {
+                Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private ArrayList getPhoneContact(){
