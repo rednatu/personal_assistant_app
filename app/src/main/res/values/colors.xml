@@ -8,4 +8,8 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="title_color">	#23d1f6</color>
+    <color name="lighgrey">#989797</color>
+    <color name="underline">#D8D6D6</color>
+    <color name="mycolor">#46DDA9</color>
+
 </resources>
